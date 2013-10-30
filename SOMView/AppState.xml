@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<java version="1.6.0_31" class="java.beans.XMLDecoder"> 
+ <object class="org.opensim.utils.ApplicationState"> 
+  <void property="stateObjects"> 
+   <void method="put"> 
+    <string>MotionsDB</string> 
+    <object class="org.opensim.view.motions.MotionsDBDescriptor"/> 
+   </void> 
+   <void method="put"> 
+    <string>ViewDB</string> 
+    <object class="org.opensim.view.pub.ViewDBDescriptor"/> 
+   </void> 
+   <void method="put"> 
+    <string>OpenSimDB</string> 
+    <object class="org.opensim.view.pub.OpenSimDBDescriptor"/> 
+   </void> 
+   <void method="put"> 
+    <string>Plugins</string> 
+    <object class="org.opensim.view.pub.PluginsDB"/> 
+   </void> 
+   <void method="put"> 
+    <string>CoordinateViewer</string> 
+    <object class="org.opensim.coordinateviewer.CoordinateViewerDescriptor"/> 
+   </void> 
+  </void> 
+ </object> 
+</java> 

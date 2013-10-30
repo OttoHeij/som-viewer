@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+OpenIDE-Module: org.tum.opensim.somview
+OpenIDE-Module-Layer: org/tum/opensim/somview/layer.xml
+OpenIDE-Module-Localizing-Bundle: org/tum/opensim/somview/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.0
+

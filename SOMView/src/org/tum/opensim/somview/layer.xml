@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>
+    <folder name="Actions">
+        <folder name="View">
+            <file name="org-tum-opensim-somview-SOMViewAction.instance"/>
+        </folder>
+    </folder>
+    <folder name="Menu">
+        <folder name="Window">
+            <attr name="org-opensim-view-actions-ViewAddNewAction.shadow/org-tum-opensim-somview-SOMViewAction.shadow" boolvalue="true"/>
+            <attr name="org-tum-opensim-somview-SOMViewAction.shadow/org-opensim-view-ExplorerAction.instance" boolvalue="true"/>
+            <file name="org-tum-opensim-somview-SOMViewAction.shadow">
+                <attr name="originalFile" stringvalue="Actions/View/org-tum-opensim-somview-SOMViewAction.instance"/>
+            </file>
+        </folder>
+    </folder>
+</filesystem>

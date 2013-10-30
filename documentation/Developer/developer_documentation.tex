@@ -1,0 +1,98 @@
+\documentclass[a4paper]{scrartcl}
+\usepackage[utf8x]{inputenc}
+\usepackage{ucs}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{scrpage2} 
+\usepackage{ulem}
+\usepackage{tabularx}
+\usepackage{cancel}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{color}
+
+\newcommand{\imagenumber}[1]{\textcolor{red}{\textbf{#1}}}
+
+
+\begin{document}
+\tableofcontents
+\newpage
+
+\section{General Information}
+The OpenSim GUI that is built upon the Netbeans is (at least at the time this manual was written, March of 2012) hardly documented for developers.
+Therefore section \ref{sec:new-models-opensim} of this developer documentation will cover what the authors of this manual were able to figure out about how to create new modules for the OpenSim GUI in general and how to access the data loaded within the OpenSim GUI.
+Section \ref{sec:somview-export-implementation} deals with some details about the implementation of the SOMExport and SOMView module that might be good to keep in mind when further developing them.
+
+\section{Creating new modules for OpenSim in general}
+\label{sec:new-models-opensim}
+The user interface shipped with OpenSim is built upon the Netbeans Platform. For any GUI specific issues not concerning the access to OpenSim data, the Netbeans Platform documentation is the right place to go (\href{http://netbeans.org/features/platform/all-docs.html}{http://netbeans.org/features/platform/all-docs.html}).
+In order to develop your own modules you will need to install a version of the Netbeans IDE.
+The basic version with support for the \textbf{Netbeans Platform SDK} provides all  the needed functionalities (\href{http://netbeans.org/downloads/index.html}{http://netbeans.org/downloads/index.html}).
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=11cm]{graphics/Add_Netbeans_Platform.png}
+    \caption{Adding the netbeans platform}
+    \label{fig:platform}
+\end{figure}\\
+After starting your IDE the first step is letting Netbeans know about the Netbeans Platform that is used for the OpenSim GUI. To do so, go to the \textbf{tools} menu and select the \textbf{Netbeans Platforms} entry. You will be presented with a window showing all your currently available Netbeans Platforms (see figure \ref{fig:platform}). Click on the \textbf{Add Platform...} button and add the OpenSim platform by specifying the path to OpenSim (example: \verb|C:\OpenSim2.4.0|). This will add OpenSim to your list of available platforms.\\
+Now you are able to create a new module by choosing \textbf{File} $\rightarrow$ \textbf{New Project} $\rightarrow$ \textbf{Netbeans Modules} $\rightarrow$ \textbf{Module} and following the dialog.
+For adding functionality to your module you can choose among various types of components. By right clicking on your new project and selecting \textbf{new} $\rightarrow$ \textbf{other} you get the respective dialog. 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=11cm]{graphics/Action.png}
+    \caption{Screenshot of the "new" dialog}
+    \label{fig:action}
+\end{figure}\\
+For example \textbf{Action} lets you add a new entry to the OpenSim main menus, ... (see figure \ref{fig:action})
+
+\subsection{Access to OpenSim data from the module}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=11cm]{graphics/Module_dependencies.png}
+    \caption{Screenshot of the "new" dialog}
+    \label{fig:modules}
+\end{figure}
+Of course you will want to make your module interact with data that is currently loaded in the OpenSim GUI. Since the Netbeans Platform is modular you need to add modules that you want to access as dependencies to your own module to make sure they will be available and loaded at the time your module tries to access them. Therefore right click on your project in Netbeans and select \textbf{Properties}. In the properties dialog choose \textbf{Libraries} on the left side and the tab \textbf{Module Dependencies} on the right (see figure \ref{fig:modules}). Add the modules you want to access. At start, the view module and the modeling module are usually sufficient.\\
+Those modules provide their data via singleton instances of certain objects.
+Good points of entry are:
+\begin{itemize}
+    \item \verb|org.opensim.view.motions.MotionsDB| : provides motion data
+    \item \verb|org.opensim.view.pub.OpenSimDB| : provides all kinds of data
+    \item \verb|org.opensim.view.pub.ViewDB| : provides data that is currently opened in the view
+\end{itemize}
+For anything further please refer to the OpenSim API documentation as well as the developers guide.
+
+\subsection{Testing and deploying your module}
+In order to test your module just hit the \textbf{play} button in your Netbeans main toolbar or right click on your project in the navigator and choose \textbf{run}.\\
+The update center poses one way to deploy your module. 
+To use it, build your module by right clicking on your project in the navigator and choosing \textbf{build}.
+Netbeans will create a \textbf{.nbm} file in a subfolder of your project folder called \textbf{build}.
+As described in the users manual of the SOMView and SOMExport documentation, you can install the module in OpenSim by launching the \textbf{Module Manager} in the \textbf{Tools} menu of OpenSim, clicking \textbf{Update} and following the wizard.
+
+\subsection{Problem - Solution}
+Depending on the version of Netbeans that you are using for development, you might need to turn off the jar-compression inside the \textbf{.nbm} file. Netbeans versions greater than 6.9 compress the jar files within the \textbf{.nbm} package which OpenSim can't handle.
+In case your version of Netbeans is greater than 6.9, add the line \verb|use.pack200=false| to the project properties of your module.
+
+
+\section{Information on the Implementation of SOMView and SOMExport}
+\label{sec:somview-export-implementation}
+Details on the implementation of the SOMView and SOMExport modules can be found in their JavaDocs.
+This is, however, information on a very low level. In the following sections, some more abstract concepts of the SOMView and SOMexport implementation will be presented.
+\subsection{Buffers to increase UI speed}
+Rendering the umatrix can be computationally quite expensive (in particular when it is interpolated). Also, the trajectories need to be repainted at other intervals than the umatrix background. In order to keep the number of necessary repaints for the trajectories as well as for the umatrix as small as possible several buffers are employed.\\
+All the buffers are instances of the \verb|BufferedImage| class. There is a buffer for the trajectories, one for the umatrix background and a third one that combines both, the trajectory and umatrix buffer and takes zooming and quality settings into account.\\
+The trajectory buffer as well as the umatrix buffer are independent of zooming. Both of them are repainted when the user changes the rendering quality or when a new SOM is loaded. In addition, the trajectory buffer is refreshed alone when the user changes properties of the trajectories or, in case synchronization is active, when the motion is executed in OpenSim.
+The umatrix buffer is redrawn alone when the user changes umatrix settings or activates the interpolation. \\
+Every time when either the umatrix buffer or the trajectory buffer is refreshed, also the buffer that combines scaled versions of both will be refreshed.\\
+The final result that is displayed on the \verb|UMatrix| panel (\verb|UMatrix.java|) is simply a copy of the combining buffer.
+Yet, using this buffer that combines and scales the trajectory and the umatrix buffer has shown to considerably improve the scrolling speed as particularly the scaling operation seems to be very costly.
+\subsection{Observable and event sending UMatrix}
+To provide information to other objects when for example a new SOM is loaded in the umatrix panel, the \verb|UMatrix| class (\verb|UMatrix.java|) implements the \verb|observable| pattern. Any object implementing the \verb|observer| interface can register as an observer and will receive notifications when important events happen. As he receives these events, he can update its data. Currently, the umatrix only notifies its observers when a new SOM was loaded. This could be extended in future development if required. \\
+Some computational processes regarding the umatrix can take some time. In order to keep the user notified, the \verb|UMatrix| class (\verb|UMatrix.java|) sends out progress events at the beginning of every potentially long computation and at the end as well. Progress event listeners can register to receive those events. At this time, only the \verb|SOMView| class (\verb|SOMView.java|) is registered as a listener. In further development there might however be more classes with expensive computational processes and more classes that need to display progress.
+\subsection{Interpolation via PaintContext}
+If the user chooses to show contour lines, the whole umatrix background is interpolated in order to get a smoother representation.
+Since the size of the umatrix background should not be affected by the interpolation, all the hexagons are not drawn as usual but with a \verb|PaintContext| that uses their neighbors to interpolate the color for every pixel on the hexagon. The \verb|PaintContext| is created with information on the positions and colors of the neighboring hexagons. It is applied by calling \verb|setPaint| on the respective Hexagon.
+This interpolation is heptalinear. It interpolates linearly between the colors of the 6 Neighbors of a hexagon and the color of the hexagon itself.
+
+\end{document}

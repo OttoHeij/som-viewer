@@ -1,0 +1,13 @@
+ERROR: In \eran\dev\Vtk\Graphics\vtkTensorGlyph.cxx, line 122
+vtkTensorGlyph (035D1568): No data to glyph!
+
+
+ERROR: In \eran\dev\Vtk\Graphics\vtkTensorGlyph.cxx, line 122
+vtkTensorGlyph (035D1568): No data to glyph!
+
+
+ERROR: In \eran\dev\Vtk\Rendering\vtkWin32OpenGLRenderWindow.cxx, line 238
+vtkWin32OpenGLRenderWindow (035E8778): wglMakeCurrent failed in MakeCurrent(), error: The operation completed successfully.
+
+
+
